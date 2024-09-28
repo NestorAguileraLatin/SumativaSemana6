@@ -17,14 +17,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
-        android:text="Welcome to MyApp"
+        android:text="Bienvenido"
         android:textColor="@android:color/black"
         android:textSize="28sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="184dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Campo de texto para correo electrónico con ícono de usuario -->
     <com.google.android.material.textfield.TextInputLayout
