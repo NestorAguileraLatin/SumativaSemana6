@@ -13,6 +13,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import android.widget.TextView
+
 
 class MenuActivity : AppCompatActivity() {
 
@@ -39,12 +41,36 @@ class MenuActivity : AppCompatActivity() {
         checkLocationPermission()
     }
 
+    private fun showLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    // Si la ubicación es obtenida, mostramos en el TextView
+                    val locationTextView = findViewById<TextView>(R.id.locationTextView)
+                    locationTextView.text = "La ubicación del dispositivo es:\nLatitud: ${location.latitude}, Longitud: ${location.longitude}"
+                } else {
+                    // Si la ubicación es nula, mostrar un mensaje alternativo
+                    val locationTextView = findViewById<TextView>(R.id.locationTextView)
+                    locationTextView.text = "No se pudo obtener la ubicación."
+                }
+            }
+        } else {
+            // Si el permiso no está concedido, solicitarlo de nuevo
+            checkLocationPermission()
+        }
+    }
+
     private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
         } else {
             checkBackgroundLocationPermission() // Si ya tiene el permiso en primer plano
+            showLocation()
         }
     }
 
@@ -67,8 +93,11 @@ class MenuActivity : AppCompatActivity() {
             locationPermissionCode -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     checkBackgroundLocationPermission()
+                    showLocation()
                 } else {
                     // Permiso denegado, mostrar un mensaje o deshabilitar la funcionalidad
+                    val locationTextView = findViewById<TextView>(R.id.locationTextView)
+                    locationTextView.text = "Permiso de ubicación denegado."
                 }
             }
             backgroundLocationPermissionCode -> {
